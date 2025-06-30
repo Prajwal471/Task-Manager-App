@@ -1,13 +1,54 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { handleError, handleSuccess } from './utils';
 import { FaCheck, FaPencilAlt, FaPlus, FaSearch, FaTrash } from 'react-icons/fa';
 import { ToastContainer } from 'react-toastify';
+
 import { CreateTask, DeleteTaskById, GetAllTasks, UpdateTaskById } from './api';
 import { notify } from './utils';
+
 function TaskManager() {
+    
     const [input, setInput] = useState('');
     const [tasks, setTasks] = useState([]);
     const [copyTasks, setCopyTasks] = useState([]);
     const [updateTask, setUpdateTask] = useState(null);
+    
+     const [loggedInUser, setLoggedInUser] = useState('');
+   
+    const navigate = useNavigate();
+    useEffect(() => {
+        setLoggedInUser(localStorage.getItem('loggedInUser'))
+    }, [])
+
+    const handleLogout = (e) => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('loggedInUser');
+        handleSuccess('User Loggedout');
+        setTimeout(() => {
+            navigate('/login');
+        }, 1000)
+    }
+
+    const fetchProducts = async () => {
+        try {
+            const url = "https://localhost:8080/products";
+            const headers = {
+                headers: {
+                    'Authorization': localStorage.getItem('token')
+                }
+            }
+            const response = await fetch(url, headers);
+            const result = await response.json();
+            console.log(result);
+            
+        } catch (err) {
+            handleError(err);
+        }
+    }
+    useEffect(() => {
+        fetchProducts()
+    }, [])
 
     const handleTask = () => {
         if (updateTask && input) {
@@ -139,9 +180,17 @@ function TaskManager() {
         setTasks(results);
     }
     return (
-        <div className='d-flex flex-column align-items-center
+        <div className=' d-flex flex-column align-items-center
         w-50 m-auto mt-5'>
-            <h1 className='mb-4'>Task Manager App</h1>
+            <div className='logout'>
+            <h1>Welcome {loggedInUser}</h1>
+            <button onClick={handleLogout}>Logout</button>
+           
+            
+        </div>
+        
+           
+             <h1 className='mb-4'>Task Manager App</h1>
             {/* Input and Search box */}
             <div className='d-flex justify-content-between
             align-items-center mb-4 w-100'>
@@ -215,6 +264,7 @@ function TaskManager() {
                     ))
                 }
             </div>
+           
 
             {/* Toastify */}
             <ToastContainer
@@ -226,4 +276,4 @@ function TaskManager() {
     )
 }
 
-export default TaskManager;
+export default TaskManager ;
