@@ -7,7 +7,6 @@ const PORT = process.env.PORT || 8080;
 const TaskRouter = require('./Routes/TaskRouter');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const User = require('./Models/userModel');
 const AuthRouter = require('./Routes/AuthRouter');
 
 app.get('/', (req, res) => {
