@@ -12,7 +12,7 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   // eslint-disable-next-line no-unused-vars
    const PrivateRoute = ({ element }) => {
-    return isAuthenticated ? element : <Navigate to="/taskmanager" />
+    return isAuthenticated ? element : <Navigate to="/login" />
    }
   return (
     <div className="App">
