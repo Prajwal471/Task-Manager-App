@@ -415,7 +415,7 @@ function TaskManager() {
                     <div className="col-12">
                         <nav className="navbar navbar-expand-lg mb-4">
                             <div className="container-fluid">
-                                <h1 className="navbar-brand mb-0">Task Manager Pro</h1>
+                                <h1 className="navbar-brand mb-0">TaskHive</h1>
                                 <div className="navbar-nav ms-auto d-flex flex-row align-items-center">
                                     <span className="nav-item me-3">Welcome, {loggedInUser}!</span>
                                     <button 
