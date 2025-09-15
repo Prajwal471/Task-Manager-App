@@ -58,13 +58,11 @@ const signup = async (req, res) => {
             });
         }
         
-        // Validate password strength
-        const passwordValidation = validatePassword(password);
-        if (!passwordValidation.isValid) {
+        // Simplified password validation - just check minimum length
+        if (password.length < 4) {
             return res.status(400).json({ 
-                message: 'Password requirements not met', 
-                success: false,
-                errors: passwordValidation.errors
+                message: 'Password must be at least 4 characters long', 
+                success: false 
             });
         }
         
@@ -75,13 +73,12 @@ const signup = async (req, res) => {
         }
         
         const hashedPassword = await bcrypt.hash(password, 12);
-        const emailVerificationToken = crypto.randomBytes(32).toString('hex');
         
         const userModel = new UserModel({ 
             name, 
             email, 
             password: hashedPassword,
-            emailVerificationToken,
+            isEmailVerified: true, // Auto-verify emails to remove limits
             stats: {
                 totalTasksCreated: 0,
                 totalTasksCompleted: 0,
@@ -98,7 +95,7 @@ const signup = async (req, res) => {
         
         res.status(201)
             .json({
-                message: "Signup successful! Please check your email for verification.",
+                message: "Account created successfully! You can now login.",
                 success: true,
                 userId: userModel._id
             })
@@ -256,13 +253,11 @@ const changePassword = async (req, res) => {
             });
         }
         
-        // Validate new password
-        const passwordValidation = validatePassword(newPassword);
-        if (!passwordValidation.isValid) {
+        // Simplified password validation - just check minimum length
+        if (newPassword.length < 4) {
             return res.status(400).json({
-                message: 'New password requirements not met',
-                success: false,
-                errors: passwordValidation.errors
+                message: 'New password must be at least 4 characters long',
+                success: false
             });
         }
         

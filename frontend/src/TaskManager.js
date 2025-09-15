@@ -77,13 +77,18 @@ function TaskManager() {
     };
 
     const handleLogout = (e) => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('loggedInUser');
-        localStorage.removeItem('theme');
-        handleSuccess('User Logged out');
-        setTimeout(() => {
-            navigate('/login');
-        }, 1000)
+        // Create a custom confirmation modal
+        const isConfirmed = window.confirm('Are you sure you want to logout?');
+        
+        if (isConfirmed) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('loggedInUser');
+            localStorage.removeItem('theme');
+            handleSuccess('Logged out successfully!');
+            setTimeout(() => {
+                navigate('/login');
+            }, 1000)
+        }
     }
 
     const fetchCategories = useCallback(async () => {
