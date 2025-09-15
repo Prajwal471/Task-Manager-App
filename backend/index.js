@@ -5,6 +5,7 @@ require('./Models/db');
 
 const PORT = process.env.PORT || 8080;
 const TaskRouter = require('./Routes/TaskRouter');
+const CategoryRouter = require('./Routes/CategoryRouter');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const AuthRouter = require('./Routes/AuthRouter');
@@ -19,6 +20,7 @@ app.get('/', (req, res) => {
 app.use(cors())
 app.use(bodyParser.json());
 app.use('/tasks', TaskRouter)
+app.use('/categories', CategoryRouter)
 app.use('/auth', AuthRouter);
 
 app.listen(PORT, () => {
