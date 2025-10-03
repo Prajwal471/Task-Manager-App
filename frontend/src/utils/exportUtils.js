@@ -1,5 +1,4 @@
 import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 
 export const exportTasksToPDF = async (tasks, title = 'My Tasks') => {
     try {

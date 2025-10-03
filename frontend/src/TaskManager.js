@@ -413,87 +413,118 @@ function TaskManager() {
             <div className="container-fluid">
                 <div className="row">
                     <div className="col-12">
-                        <nav className="navbar navbar-expand-lg mb-4">
+                        {/* Main Navigation */}
+                        <nav className="navbar navbar-expand-lg mb-4" style={{ 
+                            background: theme === 'dark' ? 'rgba(45, 45, 45, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+                            backdropFilter: 'blur(10px)',
+                            borderRadius: '15px',
+                            border: theme === 'dark' ? '1px solid #374151' : '1px solid #e5e7eb'
+                        }}>
                             <div className="container-fluid">
-                                <h1 className="navbar-brand mb-0">TaskHive</h1>
-                                <div className="navbar-nav ms-auto d-flex flex-row align-items-center">
-                                    <span className="nav-item me-3">Welcome, {loggedInUser}!</span>
-                                    <button 
-                                        className="btn btn-outline-secondary btn-sm me-2"
-                                        onClick={() => setShowProfile(true)}
-                                        title="User Profile"
-                                    >
-                                        <FaUser />
-                                    </button>
-                                    <button 
-                                        className="btn btn-outline-secondary btn-sm me-2"
-                                        onClick={toggleTheme}
-                                        title="Toggle Theme"
-                                    >
-                                        {theme === 'light' ? <FaMoon /> : <FaSun />}
-                                    </button>
-                                    <button 
-                                        className="btn btn-outline-info btn-sm me-2"
-                                        onClick={() => {
-                                            setShowAnalytics(!showAnalytics);
-                                            if (!showAnalytics) fetchAnalytics();
-                                        }}
-                                        title="View Analytics"
-                                    >
-                                        <FaChartBar />
-                                    </button>
-                                    <button 
-                                        className="btn btn-outline-secondary btn-sm me-2"
-                                        onClick={() => {
-                                            resetCategoryForm();
-                                            setShowCategoryModal(true);
-                                        }}
-                                        title="Manage Categories"
-                                    >
-                                        <FaCog />
-                                    </button>
-                                    <div className="btn-group me-2">
-                                        <button 
-                                            className="btn btn-outline-success btn-sm dropdown-toggle"
-                                            type="button"
-                                            data-bs-toggle="dropdown"
-                                            title="Export Tasks"
-                                        >
-                                            <FaDownload />
-                                        </button>
-                                        <ul className="dropdown-menu">
-                                            <li>
-                                                <button 
-                                                    className="dropdown-item"
-                                                    onClick={() => handleExport('pdf')}
-                                                >
-                                                    <FaFilePdf className="me-2" />PDF
-                                                </button>
-                                            </li>
-                                            <li>
-                                                <button 
-                                                    className="dropdown-item"
-                                                    onClick={() => handleExport('csv')}
-                                                >
-                                                    <FaFileCsv className="me-2" />CSV
-                                                </button>
-                                            </li>
-                                            <li>
-                                                <button 
-                                                    className="dropdown-item"
-                                                    onClick={() => handleExport('json')}
-                                                >
-                                                    <FaFileCode className="me-2" />JSON
-                                                </button>
-                                            </li>
-                                        </ul>
+                                <div className="d-flex justify-content-between align-items-center w-100">
+                                    {/* Brand Logo */}
+                                    <div className="d-flex align-items-center">
+                                        <div style={{
+                                            width: '40px',
+                                            height: '40px',
+                                            background: 'linear-gradient(45deg, #667eea, #764ba2)',
+                                            borderRadius: '10px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            marginRight: '12px',
+                                            boxShadow: '0 6px 20px rgba(102, 126, 234, 0.3)'
+                                        }}>
+                                            <i className="fas fa-stream" style={{ color: 'white', fontSize: '18px' }}></i>
+                                        </div>
+                                        <span style={{
+                                            fontSize: '1.4rem',
+                                            fontWeight: '700',
+                                            background: 'linear-gradient(45deg, #667eea, #764ba2)',
+                                            WebkitBackgroundClip: 'text',
+                                            WebkitTextFillColor: 'transparent',
+                                            letterSpacing: '0.5px'
+                                        }}>TaskFlow</span>
                                     </div>
-                                    <button 
-                                        className="btn btn-outline-danger btn-sm"
-                                        onClick={handleLogout}
-                                    >
-                                        Logout
-                                    </button>
+                                    <div className="navbar-nav ms-auto d-flex flex-row align-items-center">
+                                        <span className="nav-item me-3">Welcome, {loggedInUser}!</span>
+                                        <button 
+                                            className="btn btn-outline-secondary btn-sm me-2"
+                                            onClick={() => setShowProfile(true)}
+                                            title="User Profile"
+                                        >
+                                            <FaUser />
+                                        </button>
+                                        <button 
+                                            className="btn btn-outline-secondary btn-sm me-2"
+                                            onClick={toggleTheme}
+                                            title="Toggle Theme"
+                                        >
+                                            {theme === 'light' ? <FaMoon /> : <FaSun />}
+                                        </button>
+                                        <button 
+                                            className="btn btn-outline-info btn-sm me-2"
+                                            onClick={() => {
+                                                setShowAnalytics(!showAnalytics);
+                                                if (!showAnalytics) fetchAnalytics();
+                                            }}
+                                            title="View Analytics"
+                                        >
+                                            <FaChartBar />
+                                        </button>
+                                        <button 
+                                            className="btn btn-outline-secondary btn-sm me-2"
+                                            onClick={() => {
+                                                resetCategoryForm();
+                                                setShowCategoryModal(true);
+                                            }}
+                                            title="Manage Categories"
+                                        >
+                                            <FaCog />
+                                        </button>
+                                        <div className="btn-group me-2">
+                                            <button 
+                                                className="btn btn-outline-success btn-sm dropdown-toggle"
+                                                type="button"
+                                                data-bs-toggle="dropdown"
+                                                title="Export Tasks"
+                                            >
+                                                <FaDownload />
+                                            </button>
+                                            <ul className="dropdown-menu">
+                                                <li>
+                                                    <button 
+                                                        className="dropdown-item"
+                                                        onClick={() => handleExport('pdf')}
+                                                    >
+                                                        <FaFilePdf className="me-2" />PDF
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <button 
+                                                        className="dropdown-item"
+                                                        onClick={() => handleExport('csv')}
+                                                    >
+                                                        <FaFileCsv className="me-2" />CSV
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <button 
+                                                        className="dropdown-item"
+                                                        onClick={() => handleExport('json')}
+                                                    >
+                                                        <FaFileCode className="me-2" />JSON
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <button 
+                                            className="btn btn-outline-danger btn-sm"
+                                            onClick={handleLogout}
+                                        >
+                                            Logout
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </nav>

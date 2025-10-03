@@ -153,8 +153,17 @@ function Login() {
                                                 marginBottom: '20px',
                                                 boxShadow: '0 10px 30px rgba(102, 126, 234, 0.3)'
                                             }}>
-                                                <i className="fas fa-tasks" style={{ color: 'white', fontSize: '24px' }}></i>
+                                                <i className="fas fa-stream" style={{ color: 'white', fontSize: '24px' }}></i>
                                             </div>
+                                            <div style={{
+                                                fontSize: '1.2rem',
+                                                fontWeight: '700',
+                                                background: 'linear-gradient(45deg, #667eea, #764ba2)',
+                                                WebkitBackgroundClip: 'text',
+                                                WebkitTextFillColor: 'transparent',
+                                                marginBottom: '5px',
+                                                letterSpacing: '1px'
+                                            }}>TaskFlow</div>
                                         </div>
                                         <h1 style={{
                                             fontSize: '2.5rem',
@@ -416,9 +425,16 @@ function Login() {
                         
                         {/* Footer */}
                         <div className="text-center mt-4">
-                            <p className="text-white-50 mb-0">
+                            <p style={{
+                                color: 'rgba(255, 255, 255, 0.8)',
+                                marginBottom: '0',
+                                fontSize: '0.9rem',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                            }}>
                                 <i className="fas fa-shield-alt me-2"></i>
-                                Your data is secure with us
+                                Your data is secure with TaskFlow
                             </p>
                         </div>
                     </div>

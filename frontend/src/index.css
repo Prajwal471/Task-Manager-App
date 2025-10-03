@@ -636,3 +636,210 @@ button{
   font-family: cursive;
 }
 
+/* TaskFlow Branding Styles */
+.taskflow-logo {
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.taskflow-logo:hover {
+  background: linear-gradient(45deg, #5a67d8, #6a42a0);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transform: scale(1.02);
+}
+
+.taskflow-icon {
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+  transition: all 0.3s ease;
+}
+
+.taskflow-icon:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+}
+
+.taskflow-icon i {
+  color: white;
+}
+
+/* Brand gradient */
+.brand-gradient {
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Enhanced form input styles */
+.form-control {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.form-control:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.form-control::placeholder {
+  color: #9ca3af;
+  opacity: 1;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus::placeholder {
+  color: #6b7280;
+  transform: translateY(-1px);
+}
+
+/* Input field animation */
+@keyframes inputFocus {
+  0% {
+    transform: translateY(0) scale(1);
+    box-shadow: none;
+  }
+  100% {
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
+}
+
+.form-control:focus {
+  animation: inputFocus 0.3s ease-out;
+}
+
+/* Remove browser autofill styling */
+.form-control:-webkit-autofill,
+.form-control:-webkit-autofill:hover,
+.form-control:-webkit-autofill:focus {
+  -webkit-text-fill-color: inherit !important;
+  -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+  transition: background-color 5000s ease-in-out 0s !important;
+}
+
+[data-bs-theme="dark"] .form-control:-webkit-autofill,
+[data-bs-theme="dark"] .form-control:-webkit-autofill:hover,
+[data-bs-theme="dark"] .form-control:-webkit-autofill:focus {
+  -webkit-text-fill-color: #f3f4f6 !important;
+  -webkit-box-shadow: 0 0 0 1000px #1f2937 inset !important;
+}
+
+/* Icon styling inside inputs */
+.input-icon {
+  transition: all 0.3s ease;
+  color: #9ca3af;
+}
+
+.form-control:focus + .input-icon,
+.form-control:focus ~ .input-icon {
+  color: #667eea;
+  transform: scale(1.1);
+}
+
+/* Error state styling */
+.form-control.is-invalid {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+
+.form-control.is-invalid:focus {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important;
+}
+
+/* Success state styling */
+.form-control.is-valid {
+  border-color: #10b981 !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
+}
+
+/* Loading states */
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+}
+
+label{
+  font-size: 20px;
+}
+
+.container{
+  background-color: #FFF;
+  padding: 32px 48px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 8px 8px 24px 0px rgba(66, 68, 90, 1);
+}
+
+[data-bs-theme="dark"] .container {
+  background-color: #2d2d2d;
+  color: #ffffff;
+  box-shadow: 8px 8px 24px 0px rgba(0, 0, 0, 0.3);
+}
+
+.container > h1{
+  margin-bottom: 20px;
+}
+
+.container > form{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.container div{
+  display: flex;
+  flex-direction: column;
+}
+
+.container input{
+  width: 100%;
+  font-size: 20px;
+  padding: 10px;
+  border: none;
+  outline: none;
+  border-bottom: 1px solid black;
+}
+
+[data-bs-theme="dark"] .container input {
+  background-color: transparent;
+  color: #ffffff;
+  border-bottom-color: #495057;
+}
+
+.container input::placeholder{
+  font-size: 12px;
+  font-style: italic;
+}
+
+button{
+  background-color: purple;
+  border: none;
+  font-size: 20px;
+  color: white;
+  border-radius: 5px;
+  padding: 10px;
+  cursor: pointer;
+  margin: 10px 0;
+}
+
+.logout {
+  padding: 32px 48px;
+  align-items: start;
+  margin-right: 1000px;
+  width: 500px;
+  font-family: cursive;
+}
+

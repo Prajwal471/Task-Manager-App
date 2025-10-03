@@ -155,8 +155,31 @@ function Signup() {
                                 {/* Header with theme toggle */}
                                 <div className="d-flex justify-content-between align-items-center mb-4">
                                     <div>
+                                        <div className="d-flex align-items-center mb-3">
+                                            <div style={{
+                                                width: '50px',
+                                                height: '50px',
+                                                background: 'linear-gradient(45deg, #667eea, #764ba2)',
+                                                borderRadius: '12px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                marginRight: '15px',
+                                                boxShadow: '0 8px 25px rgba(102, 126, 234, 0.3)'
+                                            }}>
+                                                <i className="fas fa-stream" style={{ color: 'white', fontSize: '20px' }}></i>
+                                            </div>
+                                            <div style={{
+                                                fontSize: '1.1rem',
+                                                fontWeight: '700',
+                                                background: 'linear-gradient(45deg, #667eea, #764ba2)',
+                                                WebkitBackgroundClip: 'text',
+                                                WebkitTextFillColor: 'transparent',
+                                                letterSpacing: '1px'
+                                            }}>TaskFlow</div>
+                                        </div>
                                         <h2 className="fw-bold mb-0 text-primary">Create Account</h2>
-                                        <p className="text-muted mb-0">Join us today!</p>
+                                        <p className="text-muted mb-0">Join TaskFlow today!</p>
                                     </div>
                                     <button 
                                         type="button"
@@ -372,7 +395,7 @@ function Signup() {
                         <div className="text-center mt-4">
                             <p className="text-white-50 mb-0">
                                 <i className="fas fa-shield-alt me-2"></i>
-                                We protect your privacy and data
+                                We protect your privacy and data with TaskFlow
                             </p>
                         </div>
                     </div>

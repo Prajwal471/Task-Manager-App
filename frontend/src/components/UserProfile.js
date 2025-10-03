@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { GetUserProfile, UpdateUserProfile, ChangePassword } from '../api';
 import { notify } from '../utils';
-import { FaUser, FaPalette, FaClock, FaKey, FaSave } from 'react-icons/fa';
+import { FaUser, FaPalette, FaKey, FaSave } from 'react-icons/fa';
 
 function UserProfile({ isOpen, onClose }) {
     const [profile, setProfile] = useState({
