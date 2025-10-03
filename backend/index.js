@@ -3,6 +3,9 @@ const app = express();
 require('dotenv').config();
 require('./Models/db');
 
+// Start due date notifier
+require('./dueDateNotifier');
+
 const PORT = process.env.PORT || 8080;
 const TaskRouter = require('./Routes/TaskRouter');
 const CategoryRouter = require('./Routes/CategoryRouter');

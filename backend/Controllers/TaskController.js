@@ -26,6 +26,10 @@ const createTask = async (req, res) => {
             $inc: { 'stats.totalTasksCreated': 1 },
             $set: { 'stats.lastActiveDate': new Date() }
         });
+            // Send notification to user
+            const { sendNotification } = require('../utils/notification');
+            const user = await UserModel.findById(userId);
+            sendNotification(user.email, 'Task Created', `Your task "${model.title}" was created.`);
         
         res.status(201)
             .json({ message: 'Task is created', success: true, data: model })
