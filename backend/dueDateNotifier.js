@@ -90,7 +90,21 @@ function startScheduler() {
   setInterval(checkDueDates, CHECK_INTERVAL_MS);
 }
 
-// Auto-start on require
-startScheduler();
+let intervalHandle = null;
 
-module.exports = { startScheduler };
+function startScheduler() {
+  if (intervalHandle) return;
+  console.log(`[DueDateNotifier] Starting with interval ${CHECK_INTERVAL_MS / 60000} min, window ${UPCOMING_WINDOW_MS / 3600000} h`);
+  // Initial run with slight delay to ensure DB is ready
+  setTimeout(checkDueDates, 5 * 1000);
+  intervalHandle = setInterval(checkDueDates, CHECK_INTERVAL_MS);
+}
+
+function stopScheduler() {
+  if (intervalHandle) {
+    clearInterval(intervalHandle);
+    intervalHandle = null;
+  }
+}
+
+module.exports = { startScheduler, stopScheduler };

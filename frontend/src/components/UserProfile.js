@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { GetUserProfile, UpdateUserProfile, ChangePassword } from '../api';
 import { notify } from '../utils';
 import { FaUser, FaPalette, FaKey, FaSave } from 'react-icons/fa';
+import NotificationToggle from './NotificationToggle';
 
 function UserProfile({ isOpen, onClose }) {
     const [profile, setProfile] = useState({
@@ -255,6 +256,8 @@ function UserProfile({ isOpen, onClose }) {
                                         Email Notifications
                                     </label>
                                 </div>
+                                {/* Device (push) notifications toggle */}
+                                <NotificationToggle user={profile} jwt={localStorage.getItem('jwtToken')} />
                             </div>
                         )}
 

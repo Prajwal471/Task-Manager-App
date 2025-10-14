@@ -70,3 +70,27 @@ router.delete('/unsubscribe', ensureAuthenticated, async (req, res) => {
 });
 
 module.exports = router;
+
+// Test endpoint: POST /notifications/test
+// Body: { userId?: string, title: string, message: string }
+router.post('/test', async (req, res) => {
+  try {
+    const { userId, title, message } = req.body;
+    if (!title || !message) return res.status(400).json({ message: 'title and message required', success: false });
+
+    const uid = userId;
+    const user = uid ? await UserModel.findById(uid) : null;
+    if (!user) return res.status(404).json({ message: 'User not found', success: false });
+
+    const { sendNotification, sendPushNotification } = require('../utils/notification');
+    // send email (or console fallback)
+    await sendNotification(user.email, title, message);
+    // send push if available
+    try { await sendPushNotification(user, title, message); } catch (e) { console.error('Push test failed', e); }
+
+    return res.status(200).json({ message: 'Test notification sent (or logged)', success: true });
+  } catch (err) {
+    console.error('Test notify error:', err);
+    return res.status(500).json({ message: 'Failed to send test notification', success: false, error: err.message });
+  }
+});
