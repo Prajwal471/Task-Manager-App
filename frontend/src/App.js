@@ -10,22 +10,19 @@ import RefrshHandler from './RefreshHandler';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  // eslint-disable-next-line no-unused-vars
+  
    const PrivateRoute = ({ element }) => {
-    return isAuthenticated ? element : <Navigate to="/login" />
+    return isAuthenticated ? element : <Navigate to="/login" replace />
    }
+   
   return (
     <div className="App">
       <RefrshHandler setIsAuthenticated={setIsAuthenticated} />
       <Routes>
-        <Route path='/' element={<Navigate to="/login" />} />
+        <Route path='/' element={<Navigate to="/login" replace />} />
         <Route path='/login' element={<Login />} />
         <Route path='/signup' element={<Signup />} />
-        {/* Uncomment and implement PrivateRoute if needed */}
-        {/* <Route path='/taskmanager' element={<PrivateRoute element={<TaskManager />} />} /> */}
-        {/* <Route path='/home' element={<Home />} /> */}
-        <Route path='/taskmanager' element={<TaskManager />} />
-        
+        <Route path='/taskmanager' element={<PrivateRoute element={<TaskManager />} />} />
       </Routes>
       
     </div>

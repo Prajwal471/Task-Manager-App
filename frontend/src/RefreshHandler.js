@@ -13,7 +13,7 @@ function RefrshHandler({ setIsAuthenticated }) {
                 location.pathname === '/login' ||
                 location.pathname === '/signup'
             ) {
-                navigate('/taskmanager', { replace: false });
+                navigate('/taskmanager', { replace: true });
             }
         }
     }, [location, navigate, setIsAuthenticated])

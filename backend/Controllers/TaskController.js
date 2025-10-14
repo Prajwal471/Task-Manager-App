@@ -29,7 +29,16 @@ const createTask = async (req, res) => {
             // Send notification to user
             const { sendNotification } = require('../utils/notification');
             const user = await UserModel.findById(userId);
-            sendNotification(user.email, 'Task Created', `Your task \"${model.taskName}\" was created.`);
+            if (user && user.preferences?.emailNotifications !== false) {
+                sendNotification(user.email, 'Task Created', `Your task \"${model.taskName}\" was created.`);
+            }
+            // Push notification (device)
+            try {
+                const { sendPushNotification } = require('../utils/notification');
+                if (user) {
+                    sendPushNotification(user, 'Task Created', `"${model.taskName}" was created.`);
+                }
+            } catch (_) {}
         
         res.status(201)
             .json({ message: 'Task is created', success: true, data: model })

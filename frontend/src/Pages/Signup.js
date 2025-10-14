@@ -142,53 +142,109 @@ function Signup() {
     };
 
     return (
-        <div className="min-vh-100 d-flex align-items-center justify-content-center py-5" style={{
+        <div>
+        <div className="login-container" style={{
+            minHeight: '100vh',
             background: theme === 'dark' 
-                ? 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)'
-                : 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)'
+                ? 'linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%)'
+                : 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px',
+            position: 'relative',
+            overflow: 'hidden'
         }}>
-            <div className="container">
+            {/* Animated Background Elements */}
+            <div className="floating-shapes">
+                <div className="shape shape-1"></div>
+                <div className="shape shape-2"></div>
+                <div className="shape shape-3"></div>
+                <div className="shape shape-4"></div>
+            </div>
+            
+            <div className="container-fluid">
                 <div className="row justify-content-center">
-                    <div className="col-12 col-md-8 col-lg-6 col-xl-5">
-                        <div className="card shadow-lg border-0" style={{ borderRadius: '20px' }}>
-                            <div className="card-body p-5">
-                                {/* Header with theme toggle */}
-                                <div className="d-flex justify-content-between align-items-center mb-4">
-                                    <div>
-                                        <div className="d-flex align-items-center mb-3">
-                                            <div style={{
-                                                width: '50px',
-                                                height: '50px',
-                                                background: 'linear-gradient(45deg, #667eea, #764ba2)',
-                                                borderRadius: '12px',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                marginRight: '15px',
-                                                boxShadow: '0 8px 25px rgba(102, 126, 234, 0.3)'
-                                            }}>
-                                                <i className="fas fa-stream" style={{ color: 'white', fontSize: '20px' }}></i>
+                    <div className="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4">
+                        <div className="login-card" style={{
+                            background: theme === 'dark' 
+                                ? 'rgba(30, 30, 30, 0.95)'
+                                : 'rgba(255, 255, 255, 0.95)',
+                            backdropFilter: 'blur(20px)',
+                            borderRadius: '25px',
+                            padding: '50px 40px',
+                            boxShadow: theme === 'dark'
+                                ? '0 25px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1)'
+                                : '0 25px 50px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.3)',
+                            border: 'none',
+                            position: 'relative',
+                            animation: 'slideInUp 0.8s ease-out'
+                        }}>
+                                {/* Header Section */}
+                                <div className="text-center mb-5">
+                                    <div className="d-flex justify-content-between align-items-start mb-4">
+                                        <div className="text-start flex-grow-1">
+                                            <div className="logo-section mb-3">
+                                                <div style={{
+                                                    width: '60px',
+                                                    height: '60px',
+                                                    background: 'linear-gradient(45deg, #667eea, #764ba2)',
+                                                    borderRadius: '15px',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    marginBottom: '20px',
+                                                    boxShadow: '0 10px 30px rgba(102, 126, 234, 0.3)'
+                                                }}>
+                                                    <i className="fas fa-stream" style={{ color: 'white', fontSize: '24px' }}></i>
+                                                </div>
+                                                <div style={{
+                                                    fontSize: '1.2rem',
+                                                    fontWeight: '700',
+                                                    background: 'linear-gradient(45deg, #667eea, #764ba2)',
+                                                    WebkitBackgroundClip: 'text',
+                                                    WebkitTextFillColor: 'transparent',
+                                                    marginBottom: '5px',
+                                                    letterSpacing: '1px'
+                                                }}>TaskFlow</div>
                                             </div>
-                                            <div style={{
-                                                fontSize: '1.1rem',
+                                            <h1 style={{
+                                                fontSize: '2.5rem',
                                                 fontWeight: '700',
                                                 background: 'linear-gradient(45deg, #667eea, #764ba2)',
                                                 WebkitBackgroundClip: 'text',
                                                 WebkitTextFillColor: 'transparent',
-                                                letterSpacing: '1px'
-                                            }}>TaskFlow</div>
+                                                marginBottom: '10px',
+                                                letterSpacing: '-0.5px'
+                                            }}>Join TaskFlow</h1>
+                                            <p style={{
+                                                color: theme === 'dark' ? '#a0a0a0' : '#6b7280',
+                                                fontSize: '1.1rem',
+                                                marginBottom: '0',
+                                                fontWeight: '400'
+                                            }}>Create your account to get started</p>
                                         </div>
-                                        <h2 className="fw-bold mb-0 text-primary">Create Account</h2>
-                                        <p className="text-muted mb-0">Join TaskFlow today!</p>
+                                        <button 
+                                            type="button"
+                                            onClick={toggleTheme}
+                                            style={{
+                                                width: '50px',
+                                                height: '50px',
+                                                borderRadius: '15px',
+                                                border: theme === 'dark' ? '2px solid #374151' : '2px solid #e5e7eb',
+                                                background: theme === 'dark' ? '#1f2937' : '#f9fafb',
+                                                color: theme === 'dark' ? '#f3f4f6' : '#374151',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                cursor: 'pointer',
+                                                transition: 'all 0.3s ease',
+                                                fontSize: '20px'
+                                            }}
+                                        >
+                                            {theme === 'light' ? '🌙' : '☀️'}
+                                        </button>
                                     </div>
-                                    <button 
-                                        type="button"
-                                        className="btn btn-outline-secondary btn-sm rounded-circle p-2"
-                                        onClick={toggleTheme}
-                                        style={{ width: '40px', height: '40px' }}
-                                    >
-                                        {theme === 'light' ? '🌙' : '☀️'}
-                                    </button>
                                 </div>
 
                                 <form onSubmit={handleSignup} className="needs-validation" noValidate>
@@ -393,9 +449,16 @@ function Signup() {
                         
                         {/* Footer */}
                         <div className="text-center mt-4">
-                            <p className="text-white-50 mb-0">
+                            <p style={{
+                                color: 'rgba(255, 255, 255, 0.8)',
+                                marginBottom: '0',
+                                fontSize: '0.9rem',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                            }}>
                                 <i className="fas fa-shield-alt me-2"></i>
-                                We protect your privacy and data with TaskFlow
+                                Your data is secure with TaskFlow
                             </p>
                         </div>
                     </div>

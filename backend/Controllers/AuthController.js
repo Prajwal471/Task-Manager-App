@@ -74,9 +74,21 @@ const signup = async (req, res) => {
         
         const hashedPassword = await bcrypt.hash(password, 12);
         
+        // Ensure we set a unique username (some deployments have a unique index on username)
+        const baseUsername = (email.split('@')[0] || name.replace(/\s+/g, '')).toLowerCase().replace(/[^a-z0-9]/g, '');
+        let username = baseUsername || `user${Date.now()}`;
+        // Try to find a unique username with a numeric suffix
+        for (let i = 0; i < 6; i++) {
+            const exists = await UserModel.findOne({ username });
+            if (!exists) break;
+            // append random 4 digits
+            username = `${baseUsername}${Math.floor(1000 + Math.random() * 9000)}`;
+        }
+
         const userModel = new UserModel({ 
             name, 
             email, 
+            username,
             password: hashedPassword,
             isEmailVerified: true, // Auto-verify emails to remove limits
             stats: {
@@ -100,11 +112,17 @@ const signup = async (req, res) => {
                 userId: userModel._id
             })
     } catch (err) {
-        console.error('Signup error:', err);
+        console.error('Signup error details:', {
+            message: err.message,
+            stack: err.stack,
+            name: err.name,
+            code: err.code
+        });
         res.status(500)
             .json({
                 message: "Internal server error",
-                success: false
+                success: false,
+                error: process.env.NODE_ENV === 'development' ? err.message : undefined
             })
     }
 }

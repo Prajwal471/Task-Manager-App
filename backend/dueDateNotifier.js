@@ -36,13 +36,17 @@ async function checkDueDates() {
       if (notified.has(key)) continue;
 
       const user = task.userId && (task.userId.email ? task.userId : await UserModel.findById(task.userId));
-      if (user && user.email) {
+      if (user && user.email && user.preferences?.emailNotifications !== false) {
         const dueInHours = Math.max(1, Math.round((new Date(task.dueDate).getTime() - now.getTime()) / (60 * 60 * 1000)));
         sendNotification(
           user.email,
           'Task Due Soon',
           `"${task.taskName}" is due in ~${dueInHours} hour(s).`
         );
+        try {
+          const { sendPushNotification } = require('./utils/notification');
+          sendPushNotification(user, 'Task Due Soon', `"${task.taskName}" is due in ~${dueInHours} hour(s).`);
+        } catch (_) {}
         notified.add(key);
       }
     }
@@ -60,13 +64,17 @@ async function checkDueDates() {
       if (notified.has(key)) continue;
 
       const user = task.userId && (task.userId.email ? task.userId : await UserModel.findById(task.userId));
-      if (user && user.email) {
+      if (user && user.email && user.preferences?.emailNotifications !== false) {
         const overdueByHours = Math.max(1, Math.round((now.getTime() - new Date(task.dueDate).getTime()) / (60 * 60 * 1000)));
         sendNotification(
           user.email,
           'Task Overdue',
           `"${task.taskName}" is overdue by ~${overdueByHours} hour(s).`
         );
+        try {
+          const { sendPushNotification } = require('./utils/notification');
+          sendPushNotification(user, 'Task Overdue', `"${task.taskName}" is overdue by ~${overdueByHours} hour(s).`);
+        } catch (_) {}
         notified.add(key);
       }
     }
