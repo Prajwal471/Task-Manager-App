@@ -189,9 +189,12 @@ const login = async (req, res) => {
 // Get user profile
 const getUserProfile = async (req, res) => {
     try {
-        const token = req.headers.authorization;
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const userId = decoded._id;
+        // Use req.userId from middleware (Auth.js already verified the token)
+        const userId = req.userId;
+        
+        if (!userId) {
+            return res.status(401).json({ message: 'User not authenticated', success: false });
+        }
         
         const user = await UserModel.findById(userId).select('-password -emailVerificationToken -passwordResetToken');
         
@@ -213,9 +216,12 @@ const getUserProfile = async (req, res) => {
 // Update user profile
 const updateUserProfile = async (req, res) => {
     try {
-        const token = req.headers.authorization;
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const userId = decoded._id;
+        // Use req.userId from middleware (Auth.js already verified the token)
+        const userId = req.userId;
+        
+        if (!userId) {
+            return res.status(401).json({ message: 'User not authenticated', success: false });
+        }
         
         const { name, theme, timezone, preferences } = req.body;
         
@@ -245,9 +251,12 @@ const updateUserProfile = async (req, res) => {
 // Change password
 const changePassword = async (req, res) => {
     try {
-        const token = req.headers.authorization;
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const userId = decoded._id;
+        // Use req.userId from middleware (Auth.js already verified the token)
+        const userId = req.userId;
+        
+        if (!userId) {
+            return res.status(401).json({ message: 'User not authenticated', success: false });
+        }
         
         const { currentPassword, newPassword } = req.body;
         

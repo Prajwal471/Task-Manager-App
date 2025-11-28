@@ -4,7 +4,8 @@ import { registerServiceWorker, askNotificationPermission, subscribeToPush } fro
 async function getPublicKey() {
   try {
     const res = await fetch('/notifications/public-key');
-    return (await res.json()).publicKey;
+    const data = await res.json();
+    return data.publicKey || null;
   } catch (e) {
     console.error('Failed to fetch public key', e);
     return null;
@@ -36,14 +37,17 @@ export default function NotificationToggle({ user, jwt }) {
       const subscription = await subscribeToPush(key, reg);
       if (!subscription) throw new Error('Subscription failed');
 
-      await fetch('/notifications/subscribe', {
+      const authHeader = jwt ? (jwt.startsWith('Bearer ') ? jwt : `Bearer ${jwt}`) : '';
+      const response = await fetch('/notifications/subscribe', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: jwt || ''
+          Authorization: authHeader
         },
         body: JSON.stringify({ endpoint: subscription.endpoint, keys: subscription.keys, userAgent: navigator.userAgent })
       });
+
+      if (!response.ok) throw new Error(`Subscribe failed: ${response.statusText}`);
 
       setEnabled(true);
     } catch (err) {
@@ -71,14 +75,17 @@ export default function NotificationToggle({ user, jwt }) {
 
       if (!endpoint) throw new Error('No subscription endpoint found');
 
-      await fetch('/notifications/unsubscribe', {
+      const authHeader = jwt ? (jwt.startsWith('Bearer ') ? jwt : `Bearer ${jwt}`) : '';
+      const response = await fetch('/notifications/unsubscribe', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: jwt || ''
+          Authorization: authHeader
         },
         body: JSON.stringify({ endpoint })
       });
+
+      if (!response.ok) throw new Error(`Unsubscribe failed: ${response.statusText}`);
 
       // also unsubscribe on SW
       const reg = await navigator.serviceWorker.getRegistration();

@@ -24,12 +24,14 @@ export default function usePushSubscription(user) {
         if (!subscription) return;
 
         // Send subscription to backend
-        const token = localStorage.getItem('jwtToken');
+        const token = localStorage.getItem('jwtToken') || localStorage.getItem('token');
+        const authHeader = token ? (token.startsWith('Bearer ') ? token : `Bearer ${token}`) : '';
+        
         await fetch('/notifications/subscribe', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: token || ''
+            Authorization: authHeader
           },
           body: JSON.stringify({ endpoint: subscription.endpoint, keys: subscription.keys, userAgent: navigator.userAgent })
         });

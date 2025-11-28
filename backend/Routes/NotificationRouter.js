@@ -11,11 +11,15 @@ router.get('/public-key', (req, res) => {
 // Save a push subscription for the authenticated user
 router.post('/subscribe', ensureAuthenticated, async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.userId || req.user?._id;
     const { endpoint, keys, userAgent } = req.body || {};
 
     if (!endpoint || !keys || !keys.p256dh || !keys.auth) {
       return res.status(400).json({ message: 'Invalid subscription payload', success: false });
+    }
+
+    if (!userId) {
+      return res.status(401).json({ message: 'User not authenticated', success: false });
     }
 
     const user = await UserModel.findById(userId);
@@ -42,11 +46,15 @@ router.post('/subscribe', ensureAuthenticated, async (req, res) => {
 // Remove a push subscription for the authenticated user
 router.delete('/unsubscribe', ensureAuthenticated, async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.userId || req.user?._id;
     const { endpoint } = req.body || {};
 
     if (!endpoint) {
       return res.status(400).json({ message: 'Endpoint is required', success: false });
+    }
+
+    if (!userId) {
+      return res.status(401).json({ message: 'User not authenticated', success: false });
     }
 
     const user = await UserModel.findById(userId);
