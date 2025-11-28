@@ -1,12 +1,10 @@
 const CategoryModel = require("../Models/CategoryModel");
-const jwt = require('jsonwebtoken');
 
 // Create a new category
 const createCategory = async (req, res) => {
     try {
-        const token = req.headers.authorization;
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const userId = decoded._id;
+        const userId = req.userId || (req.user && (req.user._id || req.user.id));
+        if (!userId) return res.status(401).json({ message: 'Unauthorized', success: false });
         
         const { name, color, icon } = req.body;
         
@@ -43,9 +41,8 @@ const createCategory = async (req, res) => {
 // Get all categories for user
 const getUserCategories = async (req, res) => {
     try {
-        const token = req.headers.authorization;
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const userId = decoded._id;
+        const userId = req.userId || (req.user && (req.user._id || req.user.id));
+        if (!userId) return res.status(401).json({ message: 'Unauthorized', success: false });
         
         const categories = await CategoryModel.find({ userId }).sort({ name: 1 });
         
@@ -63,9 +60,8 @@ const getUserCategories = async (req, res) => {
 // Update category
 const updateCategory = async (req, res) => {
     try {
-        const token = req.headers.authorization;
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const userId = decoded._id;
+        const userId = req.userId || (req.user && (req.user._id || req.user.id));
+        if (!userId) return res.status(401).json({ message: 'Unauthorized', success: false });
         
         const { id } = req.params;
         const { name, color, icon } = req.body;
@@ -108,9 +104,8 @@ const updateCategory = async (req, res) => {
 // Delete category
 const deleteCategory = async (req, res) => {
     try {
-        const token = req.headers.authorization;
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const userId = decoded._id;
+        const userId = req.userId || (req.user && (req.user._id || req.user.id));
+        if (!userId) return res.status(401).json({ message: 'Unauthorized', success: false });
         
         const { id } = req.params;
         

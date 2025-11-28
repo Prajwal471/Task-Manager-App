@@ -286,16 +286,19 @@ function TaskManager() {
             taskName,
             isDone: !isDone
         };
+        console.log('handleCheckAndUncheck called with:', item._id, 'current isDone:', isDone, 'new isDone:', !isDone);
         try {
-            const { success, message } = await UpdateTaskById(_id, obj);
+            const response = await UpdateTaskById(_id, obj);
+            console.log('UpdateTaskById response:', response);
+            const { success, message } = response;
             if (success) {
                 notify(message, 'success');
             } else {
-                notify(message, 'error');
+                notify(message || 'Failed to update task', 'error');
             }
             fetchAllTasks();
         } catch (err) {
-            console.error(err);
+            console.error('handleCheckAndUncheck error:', err);
             notify('Failed to update task', 'error');
         }
     }
@@ -354,9 +357,30 @@ function TaskManager() {
         }
     };
 
-    const isOverdue = (dueDate) => {
-        if (!dueDate || !tasks || !Array.isArray(tasks)) return false;
-        return new Date(dueDate) < new Date() && !tasks.find(task => task.dueDate === dueDate)?.isDone;
+    const isOverdue = (dueDateOrTask) => {
+    if (!dueDateOrTask || !tasks || !Array.isArray(tasks)) return false;
+
+    // support passing either a dueDate string or a task object
+    let dueDateStr = '';
+    let taskObj = null;
+    if (typeof dueDateOrTask === 'string') {
+        dueDateStr = dueDateOrTask;
+        taskObj = tasks.find(t => t.dueDate && new Date(t.dueDate).getTime() === new Date(dueDateStr).getTime());
+    } else if (typeof dueDateOrTask === 'object') {
+        taskObj = dueDateOrTask;
+        dueDateStr = taskObj.dueDate;
+    }
+
+    if (!dueDateStr) return false;
+
+    const dueTs = new Date(dueDateStr).getTime();
+    if (Number.isNaN(dueTs)) return false;
+
+    // completed tasks are not overdue
+    if (taskObj && taskObj.isDone) return false;
+
+    const now = Date.now();
+    return dueTs < now;
     };
 
     const openEditModal = (task) => {

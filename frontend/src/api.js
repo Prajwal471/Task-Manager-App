@@ -1,9 +1,14 @@
 import { API_URL } from "./utils"
 
-const getAuthHeaders = () => ({
-    'Content-Type': 'application/json',
-    'Authorization': localStorage.getItem('token')
-});
+const getAuthHeaders = () => {
+    const headers = { 'Content-Type': 'application/json' };
+    const token = localStorage.getItem('token');
+    if (token) {
+        // send as Bearer token (backend middleware accepts raw or Bearer)
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+    return headers;
+};
 
 
 export const CreateTask = async (taskObj) => {

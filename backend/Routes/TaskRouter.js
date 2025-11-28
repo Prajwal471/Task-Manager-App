@@ -6,6 +6,12 @@ const router = require('express').Router();
 // Apply authentication middleware to all routes
 router.use(ensureAuthenticated);
 
+// Get task analytics (must come before /:id routes)
+router.get('/analytics', getTaskAnalytics);
+
+// Get tasks by date range (must come before /:id routes)
+router.get('/date-range', getTasksByDateRange);
+
 // To get all the tasks
 router.get('/', fetchAllTasks);
 
@@ -17,12 +23,6 @@ router.put('/:id', updateTaskById);
 
 // To delete task we need a delete method
 router.delete('/:id', deletetaskById);
-
-// Get task analytics
-router.get('/analytics', getTaskAnalytics);
-
-// Get tasks by date range
-router.get('/date-range', getTasksByDateRange);
 
 // Add subtask to existing task
 router.post('/:taskId/subtasks', addSubtask);

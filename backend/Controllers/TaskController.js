@@ -1,15 +1,13 @@
 const TaskModel = require("../Models/TaskModel");
 const CategoryModel = require("../Models/CategoryModel");
 const UserModel = require("../Models/User");
-const jwt = require('jsonwebtoken');
 
 
 
 const createTask = async (req, res) => {
     try {
-        const token = req.headers.authorization;
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const userId = decoded._id;
+        const userId = req.userId || (req.user && (req.user._id || req.user.id));
+        if (!userId) return res.status(401).json({ message: 'Unauthorized', success: false });
         
         const data = { ...req.body, userId };
         
@@ -50,14 +48,14 @@ const createTask = async (req, res) => {
 
 const fetchAllTasks = async (req, res) => {
     try {
-        const token = req.headers.authorization;
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const userId = decoded._id;
+        const userId = req.userId || (req.user && (req.user._id || req.user.id));
+        if (!userId) return res.status(401).json({ message: 'Unauthorized', success: false });
         
         const { 
             priority, 
             category, 
-            isDone, 
+            isDone,
+            status,  // Also accept status parameter
             sortBy = 'createdAt', 
             sortOrder = 'desc',
             page = 1,
@@ -70,7 +68,10 @@ const fetchAllTasks = async (req, res) => {
         
         if (priority) filter.priority = priority;
         if (category) filter.category = category;
+        // Accept both isDone and status parameters
         if (isDone !== undefined) filter.isDone = isDone === 'true';
+        else if (status !== undefined && status !== '') filter.isDone = status === 'true';
+        
         if (search) {
             filter.$or = [
                 { taskName: { $regex: search, $options: 'i' } },
@@ -112,22 +113,40 @@ const fetchAllTasks = async (req, res) => {
 
 const updateTaskById = async (req, res) => {
     try {
-        const token = req.headers.authorization;
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const userId = decoded._id;
+        const userId = req.userId || (req.user && (req.user._id || req.user.id));
+        if (!userId) return res.status(401).json({ message: 'Unauthorized', success: false });
         
         const id = req.params.id;
         const body = req.body;
         
+        console.log('Update request - Task ID:', id, 'User ID:', userId, 'Body:', body);
+        
+        // Convert userId to ObjectId for proper matching
+        const mongoose = require('mongoose');
+        let userObjectId = userId;
+        try {
+            userObjectId = new mongoose.Types.ObjectId(userId);
+        } catch (e) {
+            console.log('userId conversion error:', e.message);
+        }
+        
         // Check if task belongs to user
-        const existingTask = await TaskModel.findOne({ _id: id, userId });
+        const existingTask = await TaskModel.findOne({ _id: id, userId: userObjectId });
+        console.log('Existing task found:', existingTask ? 'Yes' : 'No', 'Task:', existingTask);
+        
         if (!existingTask) {
             return res.status(404).json({ message: 'Task not found', success: false });
         }
         
         // Handle completion status change
         if (body.isDone !== undefined) {
-            if (body.isDone && !existingTask.isDone) {
+            // Ensure isDone is a boolean
+            const isDoneValue = typeof body.isDone === 'string' ? body.isDone === 'true' : body.isDone;
+            body.isDone = isDoneValue;
+            
+            console.log('isDone value:', isDoneValue, 'existing isDone:', existingTask.isDone);
+            
+            if (isDoneValue && !existingTask.isDone) {
                 // Task is being completed
                 body.completedAt = new Date();
                 
@@ -136,7 +155,8 @@ const updateTaskById = async (req, res) => {
                     $inc: { 'stats.totalTasksCompleted': 1 },
                     $set: { 'stats.lastActiveDate': new Date() }
                 });
-            } else if (!body.isDone && existingTask.isDone) {
+                console.log('Task marked as completed');
+            } else if (!isDoneValue && existingTask.isDone) {
                 // Task is being uncompleted
                 body.completedAt = null;
                 
@@ -145,11 +165,15 @@ const updateTaskById = async (req, res) => {
                     $inc: { 'stats.totalTasksCompleted': -1 },
                     $set: { 'stats.lastActiveDate': new Date() }
                 });
+                console.log('Task marked as uncompleted');
             }
         }
         
         const obj = { $set: {...body}};
+        console.log('Update object:', obj);
+        
         const updatedTask = await TaskModel.findByIdAndUpdate(id, obj, { new: true });
+        console.log('Updated task:', updatedTask);
         
         res.status(200)
             .json({message: 'Task Updated', success: true, data: updatedTask});
@@ -161,9 +185,8 @@ const updateTaskById = async (req, res) => {
 
 const deletetaskById = async (req, res) => {
     try {
-        const token = req.headers.authorization;
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const userId = decoded._id;
+        const userId = req.userId || (req.user && (req.user._id || req.user.id));
+        if (!userId) return res.status(401).json({ message: 'Unauthorized', success: false });
         
         const id = req.params.id;
         
@@ -197,9 +220,8 @@ const deletetaskById = async (req, res) => {
 // Get task analytics and statistics
 const getTaskAnalytics = async (req, res) => {
     try {
-        const token = req.headers.authorization;
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const userId = decoded._id;
+        const userId = req.userId || (req.user && (req.user._id || req.user.id));
+        if (!userId) return res.status(401).json({ message: 'Unauthorized', success: false });
         
         const { period = '7d' } = req.query; // 7d, 30d, 90d, 1y
         
@@ -219,47 +241,79 @@ const getTaskAnalytics = async (req, res) => {
             case '1y':
                 dateFilter = { $gte: new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000) };
                 break;
+            default:
+                // Return all-time analytics if no period specified
+                dateFilter = {};
+                break;
         }
         
-        const analytics = await TaskModel.aggregate([
-            { $match: { userId: decoded._id, createdAt: dateFilter } },
-            {
-                $group: {
-                    _id: null,
-                    totalTasks: { $sum: 1 },
-                    completedTasks: { $sum: { $cond: ["$isDone", 1, 0] } },
-                    pendingTasks: { $sum: { $cond: ["$isDone", 0, 1] } },
-                    averageCompletionTime: {
-                        $avg: {
-                            $cond: [
-                                "$completedAt",
-                                { $subtract: ["$completedAt", "$createdAt"] },
-                                null
-                            ]
-                        }
-                    },
-                    priorityBreakdown: {
-                        $push: "$priority"
-                    },
-                    categoryBreakdown: {
-                        $push: "$category"
-                    }
-                }
-            }
-        ]);
+        // Convert userId to ObjectId for proper MongoDB matching
+        const mongoose = require('mongoose');
+        let userObjectId = userId;
+        try {
+            userObjectId = new mongoose.Types.ObjectId(userId);
+        } catch (e) {
+            console.log('userId is already in correct format or could not convert:', userId);
+        }
         
-        const result = analytics[0] || {
-            totalTasks: 0,
-            completedTasks: 0,
-            pendingTasks: 0,
-            averageCompletionTime: 0,
-            priorityBreakdown: [],
-            categoryBreakdown: []
+        // Build filter
+        const filter = { userId: userObjectId };
+        if (Object.keys(dateFilter).length > 0) {
+            filter.createdAt = dateFilter;
+        }
+        
+        console.log('Analytics filter:', filter);
+        console.log('Looking for tasks with userId:', userObjectId);
+        
+        // First, check all tasks for this user (regardless of date)
+        const allUserTasks = await TaskModel.find({ userId: userObjectId });
+        console.log('Total tasks found for user (all time):', allUserTasks.length);
+        
+        // Get filtered tasks
+        const tasks = await TaskModel.find(filter);
+        console.log('Total tasks found after date filter:', tasks.length);
+        
+        // Calculate analytics
+        const totalTasks = tasks.length;
+        const completedTasks = tasks.filter(task => task.isDone).length;
+        const pendingTasks = totalTasks - completedTasks;
+        const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+        
+        // Calculate average completion time
+        const completedTasksWithTime = tasks.filter(task => task.completedAt && task.createdAt);
+        let averageCompletionTime = 0;
+        if (completedTasksWithTime.length > 0) {
+            const totalTime = completedTasksWithTime.reduce((sum, task) => {
+                return sum + (new Date(task.completedAt) - new Date(task.createdAt));
+            }, 0);
+            averageCompletionTime = totalTime / completedTasksWithTime.length;
+        }
+        
+        // Get priority breakdown
+        const priorityBreakdown = {};
+        tasks.forEach(task => {
+            const priority = task.priority || 'medium';
+            priorityBreakdown[priority] = (priorityBreakdown[priority] || 0) + 1;
+        });
+        
+        // Get category breakdown
+        const categoryBreakdown = {};
+        tasks.forEach(task => {
+            const category = task.category || 'general';
+            categoryBreakdown[category] = (categoryBreakdown[category] || 0) + 1;
+        });
+        
+        const result = {
+            totalTasks,
+            completedTasks,
+            pendingTasks,
+            completionRate,
+            averageCompletionTime,
+            priorityBreakdown,
+            categoryBreakdown
         };
         
-        // Calculate completion rate
-        result.completionRate = result.totalTasks > 0 ? 
-            Math.round((result.completedTasks / result.totalTasks) * 100) : 0;
+        console.log('Analytics result:', result);
         
         res.status(200).json({
             message: 'Analytics retrieved successfully',
@@ -268,16 +322,15 @@ const getTaskAnalytics = async (req, res) => {
         });
     } catch (err) {
         console.error('Analytics error:', err);
-        res.status(500).json({ message: 'Failed to get analytics', success: false });
+        res.status(500).json({ message: 'Failed to get analytics', success: false, error: err.message });
     }
 };
 
 // Get tasks by due date (for calendar view)
 const getTasksByDateRange = async (req, res) => {
     try {
-        const token = req.headers.authorization;
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const userId = decoded._id;
+        const userId = req.userId || (req.user && (req.user._id || req.user.id));
+        if (!userId) return res.status(401).json({ message: 'Unauthorized', success: false });
         
         const { startDate, endDate } = req.query;
         
@@ -310,9 +363,8 @@ const getTasksByDateRange = async (req, res) => {
 // Toggle subtask completion
 const toggleSubtask = async (req, res) => {
     try {
-        const token = req.headers.authorization;
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const userId = decoded._id;
+        const userId = req.userId || (req.user && (req.user._id || req.user.id));
+        if (!userId) return res.status(401).json({ message: 'Unauthorized', success: false });
         
         const { taskId, subtaskId } = req.params;
         
@@ -343,9 +395,8 @@ const toggleSubtask = async (req, res) => {
 // Add subtask to existing task
 const addSubtask = async (req, res) => {
     try {
-        const token = req.headers.authorization;
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const userId = decoded._id;
+        const userId = req.userId || (req.user && (req.user._id || req.user.id));
+        if (!userId) return res.status(401).json({ message: 'Unauthorized', success: false });
         
         const { taskId } = req.params;
         const { text } = req.body;
